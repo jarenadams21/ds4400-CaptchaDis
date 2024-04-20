@@ -5,7 +5,7 @@ import random
 file_paths = './data/'
 
 class AudioMNIST(Dataset):
-    def __init__(self, load_entire_filetree=False, subset_size=3000):
+    def __init__(self, load_entire_filetree=False, subset_size=10000):
         self.files = self._build_files(subset_size)
         self.audio_len = 48000
         self.shift_ptc = 0.4
@@ -39,7 +39,3 @@ class AudioMNIST(Dataset):
         mfcc = AudioHandler.mfcc(shift)
         
         return mfcc, self.files[idx][1]
-
-# Initialize dataset
-dataset = AudioMNIST(subset_size=3000)
-loader = DataLoader(dataset, batch_size=10, shuffle=True, num_workers=4)
