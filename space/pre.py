@@ -27,35 +27,15 @@ class AudioHandler():
         return signal.roll(shift)
     
     @staticmethod
-    def spectrogram(signal, n_mels=64, n_fft=2034, hop_len=None):
-        top_db = 80
-        
-        spec = transforms.MelSpectrogram(48000, n_fft=n_fft, 
-                                        hop_length=hop_len, 
-                                        n_mels=n_mels)(signal)
-        spec = transforms.AmplitudeToDB(top_db=top_db)(torch.Tensor(spec))
-        
-        return spec
-    
-    @staticmethod
-    def spectral_augmentation(spec, max_mask_ptc=0.1, 
-                              n_freq_masks=1, 
-                              n_time_masks=1):
-        """ Augment the spectrogram data. """
-        _, n_mels, n_steps = spec.shape
-        mask_value = spec.mean()
-        aug_spec = spec
-        
-        freq_mask_param = max_mask_ptc * n_mels
-        for _ in range(n_freq_masks):
-            aug_spec = transforms.FrequencyMasking(
-                freq_mask_param
-            )(aug_spec, mask_value)
-            
-        time_mask_param = max_mask_ptc * n_steps
-        for _ in range(n_time_masks):
-            aug_spec = transforms.TimeMasking(
-                time_mask_param
-            )(aug_spec, mask_value)
-            
-        return aug_spec
+    def mfcc(signal, n_mfcc=13, n_mels=40, n_fft=2048, hop_len=None):
+        mfcc_transform = transforms.MFCC(
+            sample_rate=48000,
+            n_mfcc=n_mfcc,
+            melkwargs={
+                'n_fft': n_fft,
+                'n_mels': n_mels,
+                'hop_length': hop_len
+            }
+        )
+        mfccs = mfcc_transform(signal)
+        return mfccs
