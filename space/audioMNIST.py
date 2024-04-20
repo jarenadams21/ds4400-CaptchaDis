@@ -37,11 +37,6 @@ class AudioMNIST(Dataset):
         signal = AudioHandler.open(self.files[idx][0])[0]
         pad = AudioHandler.pad(signal, self.audio_len)
         shift = AudioHandler.time_shift(pad, self.shift_ptc)
-        sgram = AudioHandler.spectrogram(
-            shift, n_mels=64, n_fft=1024, hop_len=None
-        )
-        aug_sgram = AudioHandler.spectral_augmentation(
-            sgram, max_mask_ptc=0.1, n_freq_masks=2, n_time_masks=2
-        )
+        mfcc = AudioHandler.mfcc(shift)
         
-        return aug_sgram, self.files[idx][1]
+        return mfcc, self.files[idx][1]
