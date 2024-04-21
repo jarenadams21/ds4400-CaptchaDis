@@ -38,5 +38,11 @@ class AudioMNIST(Dataset):
         pad = AudioHandler.pad(signal, self.audio_len)
         shift = AudioHandler.time_shift(pad, self.shift_ptc)
         mfcc = AudioHandler.mfcc(shift)
+
+        # Squeeze the channel dimension if necessary
+        if mfcc.size(0) == 1:
+            mfcc = mfcc.squeeze(0)
         
+        mfcc = mfcc.transpose(0, 1)  # Switch n_mfcc and time dimensions
+
         return mfcc, self.files[idx][1]
