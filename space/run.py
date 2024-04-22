@@ -1,3 +1,5 @@
+""" App Boilerplate
+
 import torch
 import gradio as gr
 import tempfile
@@ -14,28 +16,11 @@ model.to(device)
 model.eval()
 
 def predict(audio_data):
-
-    if isinstance(audio_data, tuple) and len(audio_data) == 2:
-        data, sample_rate = audio_data
-        if isinstance(data, np.ndarray):
-            if data.ndim == 1:
-                data = data.reshape(-1, 1)
-            # Process data here as before
-        else:
-            return "Received non-array audio data"
-    else:
-        return f"Unexpected input type or structure: {type(audio_data)}"
-
-    # Write the audio data to a temporary file
-    with tempfile.NamedTemporaryFile(suffix='.wav', delete=True) as tmpfile:
-        sf.write(tmpfile.name, data, sample_rate)
-        tmpfile.flush()  # Make sure to flush so data is written before reading
-        
         # Process audio file
-        waveform, _ = AudioHandler.open(tmpfile.name)  # Load waveform
-        waveform = AudioHandler.pad(waveform)          # Apply padding
-        mfcc = AudioHandler.mfcc(waveform)             # Compute MFCCs
-        mfcc = mfcc.unsqueeze(0).to(device)            # Add batch dimension and send to device
+        waveform, _ = AudioHandler.open(tmpfile.name)
+        waveform = AudioHandler.pad(waveform)          
+        mfcc = AudioHandler.mfcc(waveform)            
+        mfcc = mfcc.unsqueeze(0).to(device)            
 
     # Predict using the model
     with torch.no_grad():
@@ -48,10 +33,12 @@ def predict(audio_data):
 # Setup Gradio interface
 iface = gr.Interface(
     fn=predict,
-    inputs=gr.Audio(type='numpy', label="Record or Upload Audio"),  # Ensure the correct type is set
+    inputs=gr.Audio(type='numpy', label="Record or Upload Audio"),
     outputs="text"
 )
 
 
 # Launch the app
 iface.launch()
+
+"""
